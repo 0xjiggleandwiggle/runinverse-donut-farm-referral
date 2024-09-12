@@ -40,12 +40,7 @@ const createAccountUsingReferral = async () => {
             proxy: "http://109.207.128.110:46243",
             username: "j7oqmledQ7jhbD2",
             password: "ZvuFjBzqB42m49q"
-        }, 
-        {
-            proxy: "http://209.38.175.14:31112",
-            username: "h1kkpkms",
-            password: "1GNTfxzc4fUA7kTM"
-        },
+        }
     ]
 
     // preparting proxy
