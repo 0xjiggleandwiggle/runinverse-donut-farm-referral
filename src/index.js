@@ -47,7 +47,7 @@ const createAccountUsingReferral = async () => {
     // const randomProxy = proxies_list[Math.floor(Math.random() * proxies_list.length)];
 
     const browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: ['--proxy-server=http://209.38.175.14:31112'], timeout: 60000
     });
     const page = await browser.newPage();
