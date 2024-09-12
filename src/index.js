@@ -1,0 +1,152 @@
+require("dotenv").config();
+
+// packages
+const chalk = require("chalk");
+const checkProxy = require('check-proxy');
+const puppeteer = require("puppeteer");
+var rug = require('random-username-generator');
+const Stopwatch = require('stopwatch-node');
+const fs = require('fs');
+const path = require('path');
+
+
+//utils
+const logger = require("./utils/logger.js");
+const getProxies = require("./utils/proxies.js");
+
+// Define the log file path
+const logFilePath = path.join(__dirname, 'app.txt');
+
+// Create a writable stream
+const logStream = fs.createWriteStream(logFilePath, { flags: 'a' });
+
+// Override console.log to write to the log file
+console.log = (...args) => {
+    // Format the log message with a timestamp
+    const timestamp = new Date().toISOString();
+    const message = `${timestamp} - ${args.join(' ')}\n`;
+    
+    // Write the message to the log file
+    logStream.write(message);
+    
+    // Also print the message to the console
+    process.stdout.write(message);
+};
+
+const createAccountUsingReferral = async () => {
+    // env variables
+    const referal_link = process.env.referal_link;
+    const PRODUCT_ENVIRONEMENT = process.env.ENVIRONMENT;
+    let headless_browser = false;
+
+    if(PRODUCT_ENVIRONEMENT == "production") {
+        headless_browser = true;
+    } else if (PRODUCT_ENVIRONEMENT == "development"){
+        headless_browser = false;
+    }
+
+    const proxies_list = [
+        {
+            proxy: "http://109.207.128.90:42774",
+            username: "2VyABZ13vCNu1HJ",
+            password: "5rI02oK3sMNXB2S"
+        },
+        {
+            proxy: "http://109.207.128.193:42312",
+            username: "ZKRh2TiFPyVuzk8",
+            password: "1oE1PD9d8wIuOF6"
+        },
+        {
+            proxy: "http://109.207.128.110:46243",
+            username: "j7oqmledQ7jhbD2",
+            password: "ZvuFjBzqB42m49q"
+        },
+    ]
+
+    // preparting proxy
+    const randomProxy = proxies_list[Math.floor(Math.random() * proxies_list.length)];
+
+    const browser = await puppeteer.launch({
+        headless: headless_browser,
+        args: [`--proxy-server=${randomProxy.proxy}`]  // Set the proxy server
+    });
+    const page = await browser.newPage();
+
+
+    await page.authenticate({
+        username: randomProxy.username,
+        password: randomProxy.password,
+    });
+
+    await page.goto(referal_link, {
+        waitUntil: 'networkidle0'
+    });  // A website to check IP
+
+    logger.info(`referal link ${referal_link} loaded successfully`);
+
+    await page.click('#__next > div.c-PJLV.c-PJLV-ikRbgih-css > div.c-PJLV.c-PJLV-ikGFHpk-css > main > div > div > div.c-dhzjXW.c-dhzjXW-iiqjHSX-css > button > div > div > div', {
+        delay: 2000
+    });
+
+    await page.waitForNetworkIdle();
+
+    logger.info(`sign up page loaded successfully`);
+
+    // filling infos
+    logger.info('now filling account informations');
+
+    logger.info('generating email');
+
+    rug.setSeperator('_');
+
+    var new_username = rug.generate();
+
+    const email = `${new_username}@outlook.com`;
+
+    logger.info('email generated ', email)
+
+    const password = `jiggleandwigglexoxo`;
+
+    // email
+    logger.info(`filling email: ${email}`);
+    await page.type('div.c-PJLV.c-PJLV-ikEpIKg-css > form > div:nth-child(1) > div > div > div > input', email);
+
+    // password
+    logger.info(`filling passowrd: ${password}`);
+    await page.type(' div.c-PJLV.c-PJLV-ikEpIKg-css > form > div:nth-child(2) > div > div > div.c-dhzjXW.c-dhzjXW-icmpvrW-css > input', password);
+
+    // confirm password
+    logger.info(`filling confirm passowrd: ${password}`);
+    await page.type('div.c-PJLV.c-PJLV-ikEpIKg-css > form > div.c-PJLV.c-PJLV-ifbYheq-css > div > div > div.c-dhzjXW.c-dhzjXW-icmpvrW-css > input', password);
+    
+    await page.click('div.c-PJLV.c-PJLV-ikEpIKg-css > form > button > div > div > div');
+    await page.waitForNetworkIdle();
+
+    logger.info(`account created successfully ${email}`);
+    await browser.close();
+
+}
+
+function delay(seconds) {
+    return new Promise(resolve => setTimeout(resolve, seconds * 1000));
+}
+
+(async() => {
+
+    // env variables
+    const referal_link = process.env.referal_link;
+
+    // starting check
+    console.log(`${chalk.blue("Referal universe farming started <3")} - link: ${chalk.blue(referal_link)}`);
+
+
+    let count_creation = 1;
+    for(let i= 0; i < 10000; i++){
+        logger.info(`account referal creation for the ${count_creation} time has started`);
+        await createAccountUsingReferral();
+        logger.info(`account referal creation for the ${count_creation} time has finish in `);
+        count_creation++;
+        await delay(20);
+    }
+
+})();
