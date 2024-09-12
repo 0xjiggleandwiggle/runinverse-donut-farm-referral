@@ -12,26 +12,6 @@ const path = require('path');
 
 //utils
 const logger = require("./utils/logger.js");
-const getProxies = require("./utils/proxies.js");
-
-// Define the log file path
-const logFilePath = path.join(__dirname, 'app.txt');
-
-// Create a writable stream
-const logStream = fs.createWriteStream(logFilePath, { flags: 'a' });
-
-// Override console.log to write to the log file
-console.log = (...args) => {
-    // Format the log message with a timestamp
-    const timestamp = new Date().toISOString();
-    const message = `${timestamp} - ${args.join(' ')}\n`;
-    
-    // Write the message to the log file
-    logStream.write(message);
-    
-    // Also print the message to the console
-    process.stdout.write(message);
-};
 
 const createAccountUsingReferral = async () => {
     // env variables
@@ -45,30 +25,30 @@ const createAccountUsingReferral = async () => {
         headless_browser = false;
     }
 
-    const proxies_list = [
-        {
-            proxy: "http://109.207.128.90:42774",
-            username: "2VyABZ13vCNu1HJ",
-            password: "5rI02oK3sMNXB2S"
-        },
-        {
-            proxy: "http://109.207.128.193:42312",
-            username: "ZKRh2TiFPyVuzk8",
-            password: "1oE1PD9d8wIuOF6"
-        },
-        {
-            proxy: "http://109.207.128.110:46243",
-            username: "j7oqmledQ7jhbD2",
-            password: "ZvuFjBzqB42m49q"
-        },
-    ]
+    // const proxies_list = [
+    //     {
+    //         proxy: "http://109.207.128.90:42774",
+    //         username: "2VyABZ13vCNu1HJ",
+    //         password: "5rI02oK3sMNXB2S"
+    //     },
+    //     {
+    //         proxy: "http://109.207.128.193:42312",
+    //         username: "ZKRh2TiFPyVuzk8",
+    //         password: "1oE1PD9d8wIuOF6"
+    //     },
+    //     {
+    //         proxy: "http://109.207.128.110:46243",
+    //         username: "j7oqmledQ7jhbD2",
+    //         password: "ZvuFjBzqB42m49q"
+    //     },
+    // ]
 
     // preparting proxy
-    const randomProxy = proxies_list[Math.floor(Math.random() * proxies_list.length)];
+    // const randomProxy = proxies_list[Math.floor(Math.random() * proxies_list.length)];
 
     const browser = await puppeteer.launch({
-        headless: headless_browser,
-        args: ['--proxy-server=http://209.38.175.14:31112']
+        headless: true,
+        args: ['--proxy-server=http://209.38.175.14:31112'], timeout: 60000
     });
     const page = await browser.newPage();
 
@@ -79,7 +59,7 @@ const createAccountUsingReferral = async () => {
     });
 
     await page.goto(referal_link, {
-        waitUntil: 'networkidle0'
+        waitUntil: 'networkidle2', timeout: 30000
     });  // A website to check IP
 
     logger.info(`referal link ${referal_link} loaded successfully`);
@@ -147,7 +127,7 @@ function delay(seconds) {
         logger.info(`account referal creation for the ${count_creation} time has finish in `);
         count_creation++;
         earned_donuts+=50;
-        logger.info(`earned ${earned_donuts} donuts`);
+        console.log(chalk.yellow(`earned ${earned_donuts} donuts`));
         await delay(20);
     }
 
