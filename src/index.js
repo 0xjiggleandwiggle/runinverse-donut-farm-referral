@@ -68,14 +68,14 @@ const createAccountUsingReferral = async () => {
 
     const browser = await puppeteer.launch({
         headless: headless_browser,
-        args: [`--proxy-server=${randomProxy.proxy}`]  // Set the proxy server
+        args: ['--proxy-server=http://209.38.175.14:31112']
     });
     const page = await browser.newPage();
 
 
     await page.authenticate({
-        username: randomProxy.username,
-        password: randomProxy.password,
+        username: "h1kkpkms",
+        password: '1GNTfxzc4fUA7kTM'
     });
 
     await page.goto(referal_link, {
@@ -138,14 +138,16 @@ function delay(seconds) {
 
     // starting check
     console.log(`${chalk.blue("Referal universe farming started <3")} - link: ${chalk.blue(referal_link)}`);
-
-
+    
     let count_creation = 1;
+    let earned_donuts = 0;
     for(let i= 0; i < 10000; i++){
         logger.info(`account referal creation for the ${count_creation} time has started`);
         await createAccountUsingReferral();
         logger.info(`account referal creation for the ${count_creation} time has finish in `);
         count_creation++;
+        earned_donuts+=50;
+        logger.info(`earned ${earned_donuts} donuts`);
         await delay(20);
     }
 
