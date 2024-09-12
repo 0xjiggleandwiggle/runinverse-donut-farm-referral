@@ -25,37 +25,42 @@ const createAccountUsingReferral = async () => {
         headless_browser = false;
     }
 
-    // const proxies_list = [
-    //     {
-    //         proxy: "http://109.207.128.90:42774",
-    //         username: "2VyABZ13vCNu1HJ",
-    //         password: "5rI02oK3sMNXB2S"
-    //     },
-    //     {
-    //         proxy: "http://109.207.128.193:42312",
-    //         username: "ZKRh2TiFPyVuzk8",
-    //         password: "1oE1PD9d8wIuOF6"
-    //     },
-    //     {
-    //         proxy: "http://109.207.128.110:46243",
-    //         username: "j7oqmledQ7jhbD2",
-    //         password: "ZvuFjBzqB42m49q"
-    //     },
-    // ]
+    const proxies_list = [
+        {
+            proxy: "http://109.207.128.90:42774",
+            username: "2VyABZ13vCNu1HJ",
+            password: "5rI02oK3sMNXB2S"
+        },
+        {
+            proxy: "http://109.207.128.193:42312",
+            username: "ZKRh2TiFPyVuzk8",
+            password: "1oE1PD9d8wIuOF6"
+        },
+        {
+            proxy: "http://109.207.128.110:46243",
+            username: "j7oqmledQ7jhbD2",
+            password: "ZvuFjBzqB42m49q"
+        }, 
+        {
+            proxy: "http://209.38.175.14:31112",
+            username: "h1kkpkms",
+            password: "1GNTfxzc4fUA7kTM"
+        },
+    ]
 
     // preparting proxy
-    // const randomProxy = proxies_list[Math.floor(Math.random() * proxies_list.length)];
+    const randomProxy = proxies_list[Math.floor(Math.random() * proxies_list.length)];
 
     const browser = await puppeteer.launch({
         headless: true,
-        args: ['--proxy-server=http://209.38.175.14:31112'], timeout: 60000
+        args: [`--proxy-server=${randomProxy.proxy}`], timeout: 60000
     });
     const page = await browser.newPage();
 
 
     await page.authenticate({
-        username: "h1kkpkms",
-        password: '1GNTfxzc4fUA7kTM'
+        username: randomProxy.username,
+        password: randomProxy.password
     });
 
     await page.goto(referal_link, {
