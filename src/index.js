@@ -13,7 +13,7 @@ const path = require('path');
 //utils
 const logger = require("./utils/logger.js");
 
-const createAccountUsingReferral = async (browser) => {
+const createAccountUsingReferral = async () => {
     // env variables
     const referal_link = process.env.referal_link;
     const PRODUCT_ENVIRONEMENT = process.env.ENVIRONMENT;
@@ -46,7 +46,10 @@ const createAccountUsingReferral = async (browser) => {
     // preparting proxy
     // const randomProxy = proxies_list[Math.floor(Math.random() * proxies_list.length)];
 
-    
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--proxy-server=http://209.38.175.14:31112'], timeout: 60000
+    });
     const page = await browser.newPage();
 
 
@@ -115,33 +118,16 @@ function delay(seconds) {
 
     // starting check
     console.log(`${chalk.blue("Referal universe farming started <3")} - link: ${chalk.blue(referal_link)}`);
-    const browser = await puppeteer.launch({
-        headless: true,
-        args: ['--proxy-server=http://209.38.175.14:31112'], timeout: 60000
-    });
+    
     let count_creation = 1;
     let earned_donuts = 0;
-    try {
-        for(let i= 0; i < 10000; i++){
-            logger.info(`account referal creation for the ${count_creation} time has started`);
-            await createAccountUsingReferral(browser);
-            logger.info(`account referal creation for the ${count_creation} time has finish in `);
-            count_creation++;
-            earned_donuts+=50;
-            console.log(chalk.yellow(`earned ${earned_donuts} donuts`));
-            await delay(20);
-        }
-    } catch(error) {
-        await browser.close();
-        for(let i= 0; i < 10000; i++){
-            logger.info(`account referal creation for the ${count_creation} time has started`);
-            await createAccountUsingReferral(browser);
-            logger.info(`account referal creation for the ${count_creation} time has finish in `);
-            count_creation++;
-            earned_donuts+=50;
-            console.log(chalk.yellow(`earned ${earned_donuts} donuts`));
-            await delay(20);
-        }
+    for(let i= 0; i < 10000; i++){
+        logger.info(`account referal creation for the ${count_creation} time has started`);
+        await createAccountUsingReferral();
+        logger.info(`account referal creation for the ${count_creation} time has finish in `);
+        count_creation++;
+        earned_donuts+=50;
+        console.log(chalk.yellow(`earned ${earned_donuts} donuts`));
     }
 
 })();
