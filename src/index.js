@@ -47,7 +47,7 @@ const createAccountUsingReferral = async () => {
     // const randomProxy = proxies_list[Math.floor(Math.random() * proxies_list.length)];
 
     const browser = await puppeteer.launch({
-        headless: true,
+        headless: false,
         args: ['--proxy-server=http://209.38.175.14:31112'], timeout: 60000
     });
     const page = await browser.newPage();
@@ -98,11 +98,12 @@ const createAccountUsingReferral = async () => {
     // confirm password
     logger.info(`filling confirm passowrd: ${password}`);
     await page.type('div.c-PJLV.c-PJLV-ikEpIKg-css > form > div.c-PJLV.c-PJLV-ifbYheq-css > div > div > div.c-dhzjXW.c-dhzjXW-icmpvrW-css > input', password);
-    
+    await delay(5);
     await page.click('div.c-PJLV.c-PJLV-ikEpIKg-css > form > button > div > div > div');
     await page.waitForNetworkIdle();
 
     logger.info(`account created successfully ${email}`);
+    await delay(10);
     await browser.close();
 
 }
